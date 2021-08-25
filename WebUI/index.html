@@ -3,6 +3,8 @@
 	<link rel="stylesheet" href="css/style.css">
 	<link rel="stylesheet" href="css/alerts.css">
 	<link rel="stylesheet" href="css/notifications.css">
+	<link rel="stylesheet" href="css/page_home.css">
+	<link rel="stylesheet" href="css/page_about.css">
 	<link href="https://cdn.funbots.dev/gamecontent/fonts/fa-5.15.4-production/css/all.css" rel="stylesheet">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 	<script src="https://code.jquery.com/jquery-3.6.0.slim.js" integrity="sha256-HwWONEZrpuoh951cQD1ov2HUK5zA5DwJ1DNUXaM6FsY=" crossorigin="anonymous"></script>
@@ -18,7 +20,7 @@
 
 	<!-- Alert message box -->
 	<div id="funUI-alerts" style="
-    z-index: 9050;
+    z-index: 9050;display:none;
 ">
 		<div id="alert-container-1" class="alert-container">
     <div id="alert-container-icon" style="
@@ -90,55 +92,130 @@
 
 	
 
-	<!-- F12 Editor -->
-	<div id="funUI-menu" style="width: 250vh;height:100vh;background-color: hsla(208, 37%, 27%, 0.2);position: relative;display:none;">
-
-<div id="logo-version" style="
-margin-left: 1vh;
-margin-top: 1vh;
-width: 75vh;
-height: 100px;
-display: flex;
-position: absolute;
-backdrop-filter: blur(25px);
-">
-
-<div id="logo" style="
-z-index: 500;
-background: url(https://cdn.funbots.dev/gamecontent/logo/logo-vu_funbots-circle-01-sm.png);
-height: 150px;
-width: 150px;
-"></div>
-
-<div id="version">Running version: V2.2.0</div>
-
-</div>
-
-<!-- Notifs box -->
-<div id="notifications" style="
-	margin-left: 1vh;
-	margin-top: 16vh;
-	width: 75vh;
-	height: 45vh;
-	display: flex;
-	position: absolute;
-	background-color: hsla(208, 37%, 27%, 0.55);
-	backdrop-filter: blur(225px);
-	">
 
 
-	<div id="title" style="text-align: center;margin-left: 1vh;">
-		<span class="title_small">FUN BOTS /</span> <span class="title">NOTIFICATIONS<span>
-	</div>
-
-	<div id="notifications-none" style="margin-top: 35%;">
-		No notifications
-	</div>
 
 
-</div>
-	</div>
+
+
+
+
+
+
+
 
 	
+
+	<!-- F12 Editor -->
+	<div id="funUI-menu" style="width: 100%;height: 100vh;background-color: rgba(43, 71, 94, 0.2);position: relative;">
+
+		<!-- Top bar navigator -->
+		<div id="navigation" class="navigator">
+			<div id="navigation_button-homepage" name="navigation_button" path="home">
+				Homepage
+			</div>
+			<div id="navigation_button-settings" name="navigation_button" path="settings">
+				Settings
+			</div>
+			<div id="navigation_button-about" name="navigation_button" path="about">
+				About
+			</div>
+		</div>
+		<!-- /Top bar navigator -->
+	
+		<!-- Homepage -->
+		<div id="funbots-page-home">
+			<!-- Notifs box -->
+			<div id="notifications" class="notificationsbox">
+
+				<div id="title" style="text-align: center;background-color: #ED8014;">
+					<span class="title">NOTIFICATIONS<span>  
+				</div>
+
+				<div id="notifications-load" style="margin-top: 25%;text-align: center;">
+					<div>Loading notifications...</div>
+					<i class="fas fa-sync fa-spin" style="
+					padding: 15px;
+					animation: fa-spin 1s infinite cubic-bezier(0.68, -0.55, 0.27, 1.55);
+					font-size: 40px;
+					"></i>
+				</div>
+			</div>
+		</div>
+		<!-- /Homepage -->
+
+		<!-- About -->
+		<div id="funbots-page-about" class="about" style="
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		display:none;
+	">
+				<!-- Credits roll box box -->
+				<div id="notifications" class="credits">
+	
+					<div id="title" style="text-align: center;background-color: #ED8014;">
+						<span class="title">CREDITS<span>  
+					</span></span></div>
+	
+					<div id="notifications-load" style="margin-top: 25%;text-align: center;">
+						
+	
+					</div>
+				</div><div id="about-social" class="social">
+	
+					<div id="title" style="text-align: center;background-color: #ED8014;">
+						<span class="title">SOCIAL<span>  
+					</span></span></div>
+	
+					<div id="content" style="
+		display: flex;
+		flex-direction: column;
+		flex-wrap: nowrap;
+	">
+	
+		<div id="discord" style="
+		padding: 20px;
+							 "><i class="fab fa-discord"></i>
+	<span id="social_text">Join the official fun-bots Discord server</span></div>
+		<div id="patreon" style="
+		padding: 20px;
+	"><i class="fab fa-patreon"></i>
+	<span id="social_text">Support us on Patreon</span></div>
+	
+	</div>
+				</div>
+	
+				<!-- Social -->
+				
+			</div>
+		<!-- /About -->
+	
+	
+	<!-- Footer -->
+	<div id="footer" class="footer">
+	<div id="flexitem" style="
+    font-size: 11px;
+    max-width: 18%;
+">
+        Fun-bots is open-source but still subject to copyright. Check funbots.dev for more information</div>
+
+<div id="flexitem" style="
+    font-size: 11px;
+    max-width: 18%;
+">
+        discord.funbots.dev</div>
+    
+    
+    
+
+
+    
+	</div>
+
+	</div>
+	
+	<script src="js/main.js"></script>
+	<script src="js/alerts.js"></script>
 	<script src="js/notifications.js"></script>
 </body></html>

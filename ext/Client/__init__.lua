@@ -29,7 +29,7 @@ local m_ClientNodeEditor = require('ClientNodeEditor')
 local m_ClientSpawnPointHelper = require('ClientSpawnPointHelper')
 local m_ConsoleCommands = require('ConsoleCommands')
 local m_Language = require('__shared/Language')
-local m_FunBotUIClient = require('UIClient')
+local m_newWebUI = require('ui/WebUI')
 
 
 function FunBotClient:__init()
@@ -40,7 +40,9 @@ function FunBotClient:OnExtensionLoaded()
 	--m_Language:loadLanguage(Config.Language)
 	self:RegisterEvents()
 	self:RegisterHooks()
-	m_FunBotUIClient:OnExtensionLoaded()
+
+	-- Load Web UI
+	m_newWebUI:OnExtensionLoaded()
 
 	-- Announce the version in the client's console if enabled in the registry
 	if RegistryManager:Get(Registry.CLIENT_SHOW_VERSION_ON_JOIN, true, false) then
@@ -93,7 +95,7 @@ end
 
 function FunBotClient:OnExtensionUnloading()
 	m_ClientBotManager:OnExtensionUnloading()
-	m_FunBotUIClient:OnExtensionUnloading()
+	m_newWebUI:OnExtensionUnloading()
 end
 
 function FunBotClient:OnLevelDestroy()
@@ -114,8 +116,10 @@ end
 function FunBotClient:OnClientUpdateInput(p_DeltaTime)
 	m_ClientNodeEditor:OnClientUpdateInput(p_DeltaTime)
 	m_ClientBotManager:OnClientUpdateInput(p_DeltaTime)
-	m_ClientSpawnPointHelper:OnClientUpdateInput(p_DeltaTime)
-	m_FunBotUIClient:OnClientUpdateInput(p_DeltaTime)
+	m_ClientSpawnPointHelper:OnClientUpdateInput(p_DeltaTime);
+
+	-- v2
+	m_newWebUI:OnClientUpdateInput()
 end
 
 function FunBotClient:OnEngineUpdate(p_DeltaTime, p_SimulationDeltaTime)

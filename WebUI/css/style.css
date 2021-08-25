@@ -36,6 +36,7 @@
     text-transform: uppercase;
     font-size: 20px;
     text-shadow: 2px 2px 5px black;
+	user-select: none;
 }
 
 .title_small {
@@ -44,4 +45,46 @@
 
 .title {
 	font-size: 25px;
+}
+
+/* Navigator */
+
+.navigator {
+	background-color: #3a434a;
+	height: 6%;
+	width: 100%;
+	position: absolute;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: center;
+}
+
+.navigator div {
+	display: flex;
+	padding: 15px;
+	border-right: 1px solid #fff;
+}
+
+.navigator div:hover {
+	background-color: #666f76;
+}
+
+.navigator div:last-child {
+	border: none;
+}
+
+/* Footer */
+.footer {
+	background-color: #3a434a;
+    position: fixed;
+    left: 0;
+    display: flex;
+    bottom: 0;
+    height: 40px;
+    width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
 }

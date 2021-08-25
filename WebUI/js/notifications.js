@@ -1,17 +1,20 @@
 /*
 Firjeneerd by Firjen
 
-"uuid": "6baef61c-5688-4304-a7ea-64d286aa686c",
-"icon": "fas fa-user",
-"text": "Cowboy JSON stuff, idk man",
-"expiration": 30000,
-"animationData": {
-    "color": "success",
-    "animation": "flash"
-
-}
-}
 */
+
+function testNotif() {
+    createAlert(`{
+        "uuid": "6baef61c-5688-4304-a7ea-64d286aa686c",
+        "icon": "fas fa-user",
+        "text": "Cowboy JSON stuff, idk man",
+        "expiration": 30000,
+        "animationData": {
+            "color": "success",
+            "animation": "flash"
+        }
+        }`);
+}
 
 /**
  * List of current alerts

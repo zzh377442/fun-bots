@@ -354,37 +354,6 @@ function FunBotUIClient:_onUIShowToolbar(p_Data)
 	end
 end
 
-function FunBotUIClient:OnClientUpdateInput(p_DeltaTime)
-	if Config.DisableUserInterface == true then
-		return
-	end
-
-	if InputManager:WentKeyDown(Config.OpenSettingsKey) then
-		if Debug.Client.UI then
-			print('Client send: UI_Request_Open')
-		end
-		-- This request can be used for UI-Toggle
-		if self.m_InWaypointEditor then
-			if self.m_LastWaypointEditorState == false then
-				self._views:enable()
-				self.m_LastWaypointEditorState = true
-			else
-				self._views:disable()
-				self.m_LastWaypointEditorState = false
-			end
-		else
-			NetEvents:Send('UI_Request_Open')
-		end
-		return
-	elseif InputManager:WentKeyUp(InputDeviceKeys.IDK_LeftAlt) and self.m_InWaypointEditor then
-		self._views:enable()
-		self.m_LastWaypointEditorState = true
-	elseif InputManager:WentKeyDown(InputDeviceKeys.IDK_LeftAlt) and self.m_InWaypointEditor then
-		self._views:disable()
-		self.m_LastWaypointEditorState = false
-	end
-end
-
 function FunBotUIClient:OnExtensionLoaded()
 	self._views:OnExtensionLoaded()
 end

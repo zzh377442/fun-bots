@@ -1,0 +1,25 @@
+.about .credits {
+    width: 30%;
+    height: 85%;
+    display: flex;
+    position: absolute;
+    background-color: hsla(208, 57%, 6%, 0.75);
+    backdrop-filter: blur(225px);
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    margin-left: 1vh;
+    margin-top: 5%;
+}
+
+.about .social {
+    width: 64%;
+    margin-left: 33%;
+    margin-top: 5%;
+    display: flex;
+    position: absolute;
+    background-color: hsla(208, 57%, 6%, 0.75);
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+}
