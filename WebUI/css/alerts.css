@@ -1,23 +1,10 @@
-.alert {
-    height: 85px;
+.alert-container {
+    transform: translate(-50%, -50%);
+    width:74vh;
+    height:38vh;
+    background-color: hsla(208, 57%, 6%, 0.75);
+    left:50%;
+    top:50%;
+    position:absolute;
     border-radius: 8px;
-    margin-top: 1vh;
-    margin-left: 1vh;
-    width: 490px;
-    display: flex;
-    background-color: hsla(208, 37%, 27%, 0.75);
-}
-
-.alert i {
-    margin-top: 18px;
-    color: #ffd000;
-    margin-left: 16px;
-    font-size: 43px;
-}
-
-.alert .text {
-    font-size: 15px;
-    padding: 5px;
-    padding-left: 17px;
-    margin: auto;
 }

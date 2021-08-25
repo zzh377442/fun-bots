@@ -16,7 +16,7 @@ Firjeneerd by Firjen
 /**
  * List of current alerts
  */
-let alerts = new Map();
+let notifications = new Map();
 
 /**
  * JSON body {uuid, icon, text, expiration}
@@ -24,10 +24,6 @@ let alerts = new Map();
  */
 function createAlert(alertData) {
     new Alert(JSON.parse(alertData));
-}
-
-function getAlert(alertUUID) {
-    return alerts.get(alertUUID)
 }
 
 colorMap = {
@@ -63,7 +59,7 @@ class Alert {
 
         this.awaitingGC = false;
 
-        alerts.set(this.uuid, this);
+        notifications.set(this.uuid, this);
         this.add();
       }
 
@@ -78,7 +74,7 @@ class Alert {
             if (this.animationData.animation != null)
             this.localClass = `animate__animated animate__${this.animationData.animation} animate__infinite`
 
-            $("#funUI-alerts").append(`
+            $("#funUI-notifications").append(`
             <div id="alert-${this.uuid}" class="alert animate__animated animate__bounceInDown">
                 <div id="icon-${this.uuid}" class="${this.localClass}">
                     <i id="fa-${this.uuid}" class="icon ${this.icon}"></i>
@@ -92,7 +88,7 @@ class Alert {
                 $("#fa-" + this.uuid).css('color', colorMapGenerator(this.animationData.color));
             }
         } else {
-            $("#funUI-alerts").append(`
+            $("#funUI-notifications").append(`
             <div id="alert-${this.uuid}" class="alert animate__animated animate__bounceInDown">
                 <div id="text" class="text">
                     ${this.text}
@@ -106,7 +102,7 @@ class Alert {
 
       remove() {
             /* Remove from map to prevent further references */
-            alerts.delete(this.uuid);
+            notifications.delete(this.uuid);
 
             /* Used to listen when the animation end so we can clean up */
             const element = document.querySelector("#alert-" + this.uuid);
