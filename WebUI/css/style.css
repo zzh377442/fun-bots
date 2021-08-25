@@ -1,0 +1,47 @@
+/* Globals */
+@font-face {
+	font-family:	'Purista';
+	font-weight:	normal;
+	src:			url('../fonts/Purista EA Medium.ttf');
+}
+
+@font-face {
+	font-family:	'Purista';
+	font-weight:	bold;
+	src:			url('../fonts/Purista EA Semibold.ttf');
+}
+
+@font-face {
+	font-family:	'Venice';
+	font-weight:	normal;
+	src:			url('../fonts/Venice-Medium.ttf');
+}
+
+@font-face {
+	font-family:	'Venice';
+	font-weight:	bold;
+	src:			url('../fonts/Venice-SemiBold.ttf');
+}
+
+* {
+	box-sizing: border-box;
+	-webkit-font-smoothing: antialiased;
+	padding: 0;
+	margin: 0;
+	font-family: Purista, sans-serif, arial;
+	border-radius: 0;
+	outline: none;
+	border: none;
+    color: white;
+    text-transform: uppercase;
+    font-size: 20px;
+    text-shadow: 2px 2px 5px black;
+}
+
+.title_small {
+	font-size: 18px;
+}
+
+.title {
+	font-size: 25px;
+}
