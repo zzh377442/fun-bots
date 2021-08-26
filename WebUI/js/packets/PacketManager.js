@@ -58,11 +58,11 @@ class PacketManagerOut {
     send(packetId, packetData) {
         /* If VU is disabled, show it in logs. */
         if (!packetManagerCache.get("vu_enabled")) {
-            console.log(`%c[FUNUI: Simulator]%c Sending packet to client. Packet name: '${packetId}' - Packet data: ${JSON.stringify(packetData)}`, 'color:blue;font-weight:bold;', 'font-weight:bold;', '', 'color:purple')
+            console.log(`%c[FUNUI: Simulator]%c Sending packet to client. Packet name: '${packetId}' - Packet data: ${packetData}`, 'color:blue;font-weight:bold;', 'font-weight:bold;', '')
             return;
         }
 
-        WebUI.Call('DispatchEventLocal', 'FUI_PACKET', JSON.stringify(packetData))
+        WebUI.Call('DispatchEventLocal', 'FUI_PACKET',packetData)
     }
 }
 
@@ -78,7 +78,7 @@ class PacketManagerIn {
         /* Validate JSON */
 
         try {
-            var packetDataJSON = JSON.parse(packetData);
+            var packetDataJSON = packetData;
         } catch(e) {
             console.error(`%c[FUNUI]%c (Packet Manager)%c Failed to parse JSON for incoming packet: ${packetId} - data: ${packetData}, rejected the packet.`, 'color:blue;font-weight:bold;', 'font-weight:bold;', '');
 
@@ -86,7 +86,6 @@ class PacketManagerIn {
 
             return;
         }
-
 
         new IncomingPacketHandler(packetId, packetDataJSON);
     }
@@ -105,10 +104,7 @@ class PacketManagerIn {
  */
 function FUN_PACKET(packetId, packetData) {
     // Todo: check if null
-
-    console.log("Received: " + JSON.stringify(packetData));
-
-    packetManager.getIncomingHandler().handle(packetId, JSON.stringify(packetData));
+    packetManager.getIncomingHandler().handle(packetId, packetData);
 }
 
 /**

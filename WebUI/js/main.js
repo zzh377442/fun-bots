@@ -19,7 +19,6 @@ function showAll(status) {
     $("#funUI-menu").show();
 }
 
-
 /* Functions used for navigation */
 
 /**
@@ -28,13 +27,28 @@ function showAll(status) {
 var currentPage = "home"
 
 $(document).ready(function(){
-    $( '[id^="navigation_button-"]' ).on( "click", function() {
+    /* Clicking on navigation buttons */
+    $( '[name^="navigation_button"]' ).on( "click", function() {
         console.log(`[FWEB] Clicked on navigation button: ` + $(this).attr('path'));
 
         if ($(this).attr('path') == null || currentPage == $(this).attr('path'))
             return;
 
+        /* Catch close button */
+        if ($(this).attr('path') == "quit") {
+            showAll(false); // Hide the big UI from screen
+            FUI_SEND('TOGGLE_UI', `{"packet":"TOGGLE_UI","status":false}`); // Return user mouse and keyboard
+            return;
+        }
+
+        /* Check if the page exists */
+        if (!$("#funbots-page-" + $(this).attr('path')).length) {
+            console.error(`%c[FUNUI]%c (Page Manager)%c Page ${$(this).attr('path')} not found.`, 'color:red;font-weight:bold;', 'font-weight:bold;', '');
+            return;
+        }
+
         currentPage = $(this).attr('path')
+
 
         /* Hide all pages, open the new page. */
         $('[id^="funbots-page-"]').each(function(idx, el){
@@ -43,17 +57,9 @@ $(document).ready(function(){
 
         $("#funbots-page-" + currentPage).show();
     });
-});
 
-/* Hotkeys */
-$(document).keypress(function(e){
-    /* ESC and F12 close UI */
-    if(e.which == 27 || e.which == 123) {
-        showAll(false)
+    /* Clicking on header buttons */
 
-        FUI_SEND('TOGGLE_UI', `{"packet":"TOGGLE_UI","status":false}`);
 
-        /* Send packet to VU UI Manager */
-        return;
-    }
+
 });

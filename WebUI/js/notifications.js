@@ -74,21 +74,21 @@ class Alert {
         if (this.icon != null) {
             this.localClass = ""
 
-            if (this.animationData.animation != null)
-            this.localClass = `animate__animated animate__${this.animationData.animation} animate__infinite`
+            if (this.icon.animation != null)
+                this.localClass = `animate__animated animate__${this.icon.animation} animate__infinite`
 
             $("#funUI-notifications").append(`
             <div id="alert-${this.uuid}" class="alert animate__animated animate__bounceInDown">
                 <div id="icon-${this.uuid}" class="${this.localClass}">
-                    <i id="fa-${this.uuid}" class="icon ${this.icon}"></i>
+                    <i id="fa-${this.uuid}" class="icon ${this.icon.icon}"></i>
                 </div>
                 <div id="text" class="text">
                     ${this.text}
                 </div>
             </div>`);
 
-            if (this.animationData.color != null) {
-                $("#fa-" + this.uuid).css('color', colorMapGenerator(this.animationData.color));
+            if (this.icon.color != null) {
+                $("#fa-" + this.uuid).css('color', colorMapGenerator(this.icon.color));
             }
         } else {
             $("#funUI-notifications").append(`
