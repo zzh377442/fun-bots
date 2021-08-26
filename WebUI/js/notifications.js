@@ -26,7 +26,7 @@ let notifications = new Map();
  * @param {*} alertData Create a new alert on the screen
  */
 function createAlert(alertData) {
-    new Alert(JSON.parse(alertData));
+    new Alert(alertData);
 }
 
 colorMap = {

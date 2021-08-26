@@ -106,7 +106,9 @@ class PacketManagerIn {
 function FUN_PACKET(packetId, packetData) {
     // Todo: check if null
 
-    packetManager.getIncomingHandler().handle(packetId, packetData);
+    console.log("Received: " + JSON.stringify(packetData));
+
+    packetManager.getIncomingHandler().handle(packetId, JSON.stringify(packetData));
 }
 
 /**

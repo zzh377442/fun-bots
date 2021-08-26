@@ -11,6 +11,9 @@ class IncomingPacketHandler {
             case 'TOGGLE_UI':
                 handleToggleUI(packetData);
                 break;
+            case 'SHOW_NOTIFICATION':
+                createAlert(packetData);
+                break;
             default:
                 console.warn(`%c[FUNUI]%c (Incoming Packet Handler)%c Unknown packet ID: ${packetName} with data: ${JSON.stringify(packetData)}`, 'color:orange;font-weight:bold;', 'font-weight:bold;', '');
                 return;

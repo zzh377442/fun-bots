@@ -16,6 +16,13 @@ function ClientUIEventHandler:__init()
     -- FUI is used for packets callback
     Events:Subscribe('FUI_CB', self, self.handlePacketCallback)
 
+    self:RegisterConsoleCommands();
+
+
+	print("Enabled \"" .. MODULE_NAME .. "\" in " .. ReadableTimetamp(SharedUtils:GetTimeMS() - s_start, TimeUnits.FIT, 1))
+end
+
+function ClientUIEventHandler:RegisterConsoleCommands()
     -- Command to send a test packet to the WebUI.
     Console:Register('UI.send', 'Send packet to WebUI', function(args)
         if args[1] ~= nil and args[2] ~= nil then
@@ -33,20 +40,25 @@ function ClientUIEventHandler:__init()
         ClientUI:ShowLargeUI(false, true)
     end)
 
-	print("Enabled \"" .. MODULE_NAME .. "\" in " .. ReadableTimetamp(SharedUtils:GetTimeMS() - s_start, TimeUnits.FIT, 1))
-end
+    -- Command to send a test packet to the WebUI.
+    Console:Register('UI.test_notification', 'Debug command', function(args)
+        self:Send(PacketOut.SHOW_NOTIFICATION, json.encode({uuid = MathUtils:RandomGuid(), icon = "fas fa-user", text = "This is a test notification", expiration = 10000, animationData = {color = "success"}}))
+    end)
 
+    -- Command to send a test packet to the WebUI.
+    Console:Register('UI.test_alert', 'Debug command', function(args)
+        self:Send(PacketOut.SHOW_NOTIFICATION, json.encode({uuid = MathUtils:RandomGuid(), icon = "fas fa-user", text = "This is a test notification", expiration = 10000, animationData = {color = "success"}}))
+    end)
+end
 
 -- Send a packet to the WebUI
 -- @param packet JSON-formatted packet
 -- @author Firjen <https://github.com/Firjens>
 function ClientUIEventHandler:Send(PacketOut, PacketData)
-    print("Outgoing packet: " .. PacketOut) -- Temp debug data
-
-    local s_packetData = json.encode(PacketData);
+    print("Outgoing packet: " .. PacketOut .. " - Body: " .. PacketData) -- Temp debug data
 
     --- todo: Check if WebUI is running
-    WebUI:ExecuteJS('FUN_PACKET("' .. PacketOut .. '", ' .. s_packetData ..');')
+    WebUI:ExecuteJS('FUN_PACKET("' .. PacketOut .. '", ' .. PacketData ..');')
 end
 
 
