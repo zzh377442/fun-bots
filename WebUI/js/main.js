@@ -19,6 +19,7 @@ function showAll(status) {
     $("#funUI-menu").show();
 }
 
+
 /* Functions used for navigation */
 
 /**
@@ -42,4 +43,17 @@ $(document).ready(function(){
 
         $("#funbots-page-" + currentPage).show();
     });
+});
+
+/* Hotkeys */
+$(document).keypress(function(e){
+    /* ESC and F12 close UI */
+    if(e.which == 27 || e.which == 123) {
+        showAll(false)
+
+        FUI_SEND('TOGGLE_UI', `{"packet":"TOGGLE_UI","status":false}`);
+
+        /* Send packet to VU UI Manager */
+        return;
+    }
 });

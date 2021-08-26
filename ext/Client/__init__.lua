@@ -28,7 +28,6 @@ local m_ClientBotManager = require('ClientBotManager')
 local m_ClientNodeEditor = require('ClientNodeEditor')
 local m_ClientSpawnPointHelper = require('ClientSpawnPointHelper')
 local m_ConsoleCommands = require('ConsoleCommands')
-local m_Language = require('__shared/Language')
 local m_newWebUI = require('ui/WebUI')
 
 
@@ -37,7 +36,6 @@ function FunBotClient:__init()
 end
 
 function FunBotClient:OnExtensionLoaded()
-	--m_Language:loadLanguage(Config.Language)
 	self:RegisterEvents()
 	self:RegisterHooks()
 
@@ -49,6 +47,25 @@ function FunBotClient:OnExtensionLoaded()
 		print("Server is running fun-bots version " .. RegistryManager:GetUtil():GetVersion())
 	end
 end
+
+-- Get Web UI
+function FunBotClient:GetWebUI()
+	return m_newWebUI;
+end
+
+function FunBotClient:OnClientUpdateInput(p_DeltaTime)
+	m_ClientNodeEditor:OnClientUpdateInput(p_DeltaTime)
+	m_ClientBotManager:OnClientUpdateInput(p_DeltaTime)
+	m_ClientSpawnPointHelper:OnClientUpdateInput(p_DeltaTime);
+
+	-- v2
+	m_newWebUI:OnClientUpdateInput()
+end
+
+
+
+
+
 
 function FunBotClient:RegisterEvents()
 	Events:Subscribe('Extension:Unloading', self, self.OnExtensionUnloading)
@@ -113,14 +130,6 @@ function FunBotClient:OnPlayerDeleted(p_Player)
 	m_ClientNodeEditor:OnPlayerDeleted(p_Player)
 end
 
-function FunBotClient:OnClientUpdateInput(p_DeltaTime)
-	m_ClientNodeEditor:OnClientUpdateInput(p_DeltaTime)
-	m_ClientBotManager:OnClientUpdateInput(p_DeltaTime)
-	m_ClientSpawnPointHelper:OnClientUpdateInput(p_DeltaTime);
-
-	-- v2
-	m_newWebUI:OnClientUpdateInput()
-end
 
 function FunBotClient:OnEngineUpdate(p_DeltaTime, p_SimulationDeltaTime)
 	m_ClientNodeEditor:OnEngineUpdate(p_DeltaTime, p_SimulationDeltaTime)

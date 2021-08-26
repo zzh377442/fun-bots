@@ -66,5 +66,10 @@ Registry = {
 
                 -- - distance the bots have to reach in height to continue with next Waypoint
                 TARGET_HEIGHT_DISTANCE_WAYPOINT = 1.5
+        },
+
+        -- Configuration related to WebUI
+        WEBUI = {
+                ENABLED = true
         }
 }
