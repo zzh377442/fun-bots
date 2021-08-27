@@ -26,6 +26,39 @@ function showAll(status) {
  */
 var currentPage = "home"
 
+/**
+ * Populate the navigation bar
+ */
+function populateNavigator() {
+    /* Get the JSON object. */
+}
+
+const navigator = `{
+    "navigator": [
+        {"id":"home", "action":"view", "path":"home", "icon":"fas fa-home"},
+        {"id":"permissions", "action":"view", "path":"permissions", "icon":"fas fa-users-cogs"},
+        {"id":"settings", "action":"view", "path":"settings", "icon":"fas fa-cogs"},
+        {"id":"traces", "action":"view", "path":"traces", "icon":"fas fa-shoe-prints"},
+        {"id":"quit", "action":"quit", "icon":"fas fa-times"}
+    ],
+
+    "sub-menu": {
+        "home": [
+            {"displayText":"Home", "path":"about","type":"WEB", "enabled":true},
+            {"displayText":"About", "path":"about", "type":"WEB", "enabled":true}
+        ],
+        "permissions": [
+            {"displayText":"Home", "path":"about", "type":"WEB", "enabled":true}
+        ],
+        "settings": [
+            {"displayText":"Home", "path":"about", "type":"WEB", "enabled":true}
+        ],
+        "traces": [
+            {"displayText":"Home", "path":"about", "type":"WEB", "enabled":true}
+        ]
+    }
+}`
+
 $(document).ready(function(){
     /* Clicking on navigation buttons */
     $( '[name^="navigation_button"]' ).on( "click", function() {
@@ -59,7 +92,4 @@ $(document).ready(function(){
     });
 
     /* Clicking on header buttons */
-
-
-
 });

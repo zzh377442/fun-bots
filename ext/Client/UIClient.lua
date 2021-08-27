@@ -11,6 +11,9 @@ function FunBotUIClient:__init()
 	self.m_InWaypointEditor = false
 	self.m_LastWaypointEditorState = false
 
+	-- STop
+	do return end;
+
 	if Config.DisableUserInterface ~= true then
 		NetEvents:Subscribe('UI_Toggle', self, self._onUIToggle)
 		Events:Subscribe('UI_Toggle', self, self._onUIToggle)

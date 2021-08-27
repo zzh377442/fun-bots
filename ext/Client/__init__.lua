@@ -27,8 +27,11 @@ local m_Logger = Logger("FunBotClient", true)
 local m_ClientBotManager = require('ClientBotManager')
 local m_ClientNodeEditor = require('ClientNodeEditor')
 local m_ClientSpawnPointHelper = require('ClientSpawnPointHelper')
-local m_ConsoleCommands = require('ConsoleCommands')
+
+-- v2
 local m_newWebUI = require('ui/WebUI')
+local m_packetManager = require('packets/PacketManager');
+local m_clientConfigManager = require('config/ClientConfigManager');
 
 
 function FunBotClient:__init()
@@ -82,9 +85,7 @@ function FunBotClient:RegisterEvents()
 	NetEvents:Subscribe('WriteClientSettings', self, self.OnWriteClientSettings)
 	NetEvents:Subscribe('CheckBotBotAttack', self, self.CheckForBotBotAttack)
 	NetEvents:Subscribe('UI_Settings', self, self.OnUISettings)
-
-	NetEvents:Subscribe('ConsoleCommands:RegisterCommands', self, self.OnRegisterConsoleCommands)
-	NetEvents:Subscribe('ConsoleCommands:PrintResponse', self, self.OnPrintResponse)
+	
 	NetEvents:Subscribe('ClientNodeEditor:RegisterEvents', self, self.OnRegisterNodeEditorEvents)
 end
 
@@ -161,7 +162,7 @@ function FunBotClient:OnUISettings(p_Data)
 end
 
 function FunBotClient:OnRegisterConsoleCommands(p_ConfigList)
-	m_ConsoleCommands:OnRegisterConsoleCommands(p_ConfigList)
+	-- m_ConsoleCommands:OnRegisterConsoleCommands(p_ConfigList)
 end
 
 function FunBotClient:OnRegisterNodeEditorEvents()
@@ -169,7 +170,7 @@ function FunBotClient:OnRegisterNodeEditorEvents()
 end
 
 function FunBotClient:OnPrintResponse(p_Response)
-	m_ConsoleCommands:OnPrintResponse(p_Response)
+	-- m_ConsoleCommands:OnPrintResponse(p_Response)
 end
 
 -- =============================================

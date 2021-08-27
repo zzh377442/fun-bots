@@ -35,7 +35,6 @@ require('__shared/Utilities')
 
 local m_NodeEditor = require('NodeEditor')
 local m_WeaponModification = require('WeaponModification')
-local m_Language = require('__shared/Language')
 local m_SettingsManager = require('SettingsManager')
 local m_BotManager = require('BotManager')
 local m_BotSpawner = require('BotSpawner')
@@ -49,6 +48,8 @@ local m_FunBotUIServer = require('UIServer')
 local m_GameDirector = require('GameDirector')
 PermissionManager = require('PermissionManager')
 
+-- Next release
+local m_Config = require('Config/ConfigManager')
 
 function FunBotServer:__init()
 	self.m_PlayerKilledDelay = 0
@@ -61,7 +62,6 @@ function FunBotServer:OnEngineInit()
 end
 
 function FunBotServer:OnExtensionLoaded()
-	m_Language:loadLanguage(Config.Language)
 	m_SettingsManager:OnExtensionLoaded()
 	self:RegisterEvents()
 	self:RegisterHooks()

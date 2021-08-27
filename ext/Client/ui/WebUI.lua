@@ -4,7 +4,7 @@ require('ui/PacketOut');
 
 -- tba
 -- @author Firjen
-local MODULE_NAME = "ClientUI";
+local MODULE_NAME = "Client Web Interface";
 
 local CLIENT_HAS_LARGE_UI_OPEN = false;
 

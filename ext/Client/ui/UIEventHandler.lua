@@ -6,15 +6,14 @@ require('ui/PacketOut');
 -- @author Firjen <https://github.com/Firjens>
 local MODULE_NAME = "ClientUI Event Handler";
 
+local MOD_FUI_CONFIG = require('ui/modules/FUIConfigMod'); -- Config Module
+
 
 function ClientUIEventHandler:__init()
     local s_start = SharedUtils:GetTimeMS()
 
     -- FUI is used for generic packets
     Events:Subscribe('FUI_PACKET', self, self.Receive)
-
-    -- FUI is used for packets callback
-    Events:Subscribe('FUI_CB', self, self.handlePacketCallback)
 
     self:RegisterConsoleCommands();
 
@@ -81,7 +80,6 @@ function ClientUIEventHandler:Receive(PacketData)
 
     -- Packet "Toggle UI"
     if s_packetData.packet == "TOGGLE_UI" then
-        print("gucci gang")
         ClientUI:ShowLargeUI(s_packetData.status, false);
         do return end;
     end
