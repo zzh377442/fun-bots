@@ -219,7 +219,7 @@ function ClientNodeEditor:IsSavingOrLoading()
 end
 
 function ClientNodeEditor:Log(...)
-	m_Logger:Write('ClientNodeEditor: ' .. Language:I18N(...))
+	-- m_Logger:Write('ClientNodeEditor: ' .. Language:I18N(...))
 end
 
 function ClientNodeEditor:OnSetEnabled(p_Args)

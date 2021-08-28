@@ -7,7 +7,7 @@ require('ui/PacketOut');
 local MODULE_NAME = "ClientUI Event Handler: Config Module";
 
 function FUIConfigMod:__init()
-    local s_start = FUIConfigMod:GetTimeMS()
+    local s_start = SharedUtils:GetTimeMS()
 
 	print("Enabled \"" .. MODULE_NAME .. "\" in " .. ReadableTimetamp(SharedUtils:GetTimeMS() - s_start, TimeUnits.FIT, 1))
 end

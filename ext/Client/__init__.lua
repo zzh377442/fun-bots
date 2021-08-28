@@ -1,5 +1,8 @@
 class('FunBotClient')
 
+-- Load utilities
+require('__shared/Utils/Timestamp');
+
 require('__shared/Config')
 require('__shared/Debug')
 require('__shared/Constants/BotColors')

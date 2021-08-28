@@ -137,9 +137,13 @@ function ConfigManager:checkConfig(configCategory, configData)
     return false;
 end
 
--- Housekeeping - check that the config option is good
+-- Get a value from the configuration file.
+-- @param configCategory Category for the configuration key
+-- @param configName Name for the file configuration key
 -- @author Firjen <https://github.com/Firjens>
+-- @return {string | nil} Return the configuration key, if it's missing it'll return the default value, returns null if no values can be found.
 function ConfigManager:get(configCategory, configName)
+    -- Check if the config is currently registered.
     if CONFIG_REGISTRY[string.lower(configCategory) .. "." .. string.lower(configName)] == nil then
         if ConfigTemplate[configCategory][configName].data.def == nil then
             print(MODULE_NAME .. "> Missing configuration value: " .. configCategory .. "." .. configName .."! Not found in template either.")

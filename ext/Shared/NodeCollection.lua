@@ -989,7 +989,7 @@ function NodeCollection:Load(p_LevelName, p_GameMode)
 
 	m_Logger:Write('Load -> Paths: '..tostring(s_PathCount)..' | Waypoints: '..tostring(s_WaypointCount))
 
-	ChatManager:Yell(Language:I18N('Loaded %d paths with %d waypoints for map %s', s_PathCount, s_WaypointCount, self.mapName), 5.5)
+	-- ChatManager:Yell(Language:I18N('Loaded %d paths with %d waypoints for map %s', s_PathCount, s_WaypointCount, self.mapName), 5.5)
 end
 
 function NodeCollection:Save()
@@ -1148,14 +1148,14 @@ function NodeCollection:Save()
 
 	if not s_Results then
 		m_Logger:Error('NodeCollection:Save -> Failed to double-check table entries for map ['..self.mapName..']: '..SQL:Error())
-		ChatManager:Yell(Language:I18N('Failed to execute query: %s', SQL:Error()), 5.5)
+		-- ChatManager:Yell(Language:I18N('Failed to execute query: %s', SQL:Error()), 5.5)
 		return
 	end
 
 	SQL:Close()
 
 	m_Logger:Write('Save -> Saved ['..s_QueriesTotal..'] waypoints for map ['..self.mapName..']')
-	ChatManager:Yell(Language:I18N('Saved %d paths with %d waypoints for map %s', s_PathCount, s_QueriesTotal, self.mapName), 5.5)
+	-- ChatManager:Yell(Language:I18N('Saved %d paths with %d waypoints for map %s', s_PathCount, s_QueriesTotal, self.mapName), 5.5)
 end
 
 -----------------------------
@@ -1367,7 +1367,7 @@ function NodeCollection:FindAlongTrace(p_Vec3Start, p_Vec3End, p_Granularity, p_
 end
 
 function NodeCollection:Log(...)
-	m_Logger:Write(Language:I18N(...))
+	-- m_Logger:Write(Language:I18N(...))
 end
 
 if g_NodeCollection == nil then

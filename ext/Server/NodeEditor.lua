@@ -326,7 +326,7 @@ function NodeEditor:StopSendingNodes(p_Player)
 end
 
 function NodeEditor:Log(...)
-	m_Logger:Write(Language:I18N(...))
+	-- m_Logger:Write(Language:I18N(...))
 end
 
 if g_NodeEditor == nil then

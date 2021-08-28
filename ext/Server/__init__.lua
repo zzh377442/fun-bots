@@ -33,6 +33,9 @@ local m_Logger = Logger("FunBotServer", Debug.Server.INFO)
 
 require('__shared/Utilities')
 
+-- Next release
+local m_Config = require('Config/ConfigManager')
+
 local m_NodeEditor = require('NodeEditor')
 local m_WeaponModification = require('WeaponModification')
 local m_SettingsManager = require('SettingsManager')
@@ -48,8 +51,6 @@ local m_FunBotUIServer = require('UIServer')
 local m_GameDirector = require('GameDirector')
 PermissionManager = require('PermissionManager')
 
--- Next release
-local m_Config = require('Config/ConfigManager')
 
 function FunBotServer:__init()
 	self.m_PlayerKilledDelay = 0

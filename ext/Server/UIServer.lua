@@ -6,7 +6,6 @@ require('__shared/Config')
 local m_NodeCollection = require('__shared/NodeCollection')
 local m_SettingsManager = require('SettingsManager')
 
-Language = require('__shared/Language')
 local BotManager = require('BotManager')
 local BotSpawner = require('BotSpawner')
 local WeaponModification = require('WeaponModification')
@@ -43,10 +42,6 @@ function FunBotUIServer:_onBotEditorEvent(p_Player, p_Data)
 
 	-- Settings
 	if request.action == 'request_settings' then
-		if Config.Language == nil then
-			Config.Language = 'en_US'
-		end
-
 		-- request.opened
 		NetEvents:SendTo('UI_Settings', p_Player, Config)
 
@@ -99,9 +94,9 @@ function FunBotUIServer:_onBotEditorEvent(p_Player, p_Data)
 		Globals.RespawnWayBots = respawning
 		BotManager:SetOptionForAll('respawn', respawning)
 		if respawning then
-			ChatManager:Yell(Language:I18N('Bot respawn activated!', request.action), 2.5)
+		--	ChatManager:Yell(Language:I18N('Bot respawn activated!', request.action), 2.5)
 		else
-			ChatManager:Yell(Language:I18N('Bot respawn deactivated!', request.action), 2.5)
+			--ChatManager:Yell(Language:I18N('Bot respawn deactivated!', request.action), 2.5)
 		end
 
 	elseif request.action == 'bot_attack' then  --toggle this function
@@ -109,9 +104,9 @@ function FunBotUIServer:_onBotEditorEvent(p_Player, p_Data)
 		Globals.AttackWayBots = attack
 		BotManager:SetOptionForAll('shoot', attack)
 		if attack then
-			ChatManager:Yell(Language:I18N('Bots will attack!', request.action), 2.5)
+			--ChatManager:Yell(Language:I18N('Bots will attack!', request.action), 2.5)
 		else
-			ChatManager:Yell(Language:I18N('Bots will not attack!', request.action), 2.5)
+			 -- -ChatManager:Yell(Language:I18N('Bots will not attack!', request.action), 2.5)
 		end
 
 	-- Trace
@@ -165,7 +160,7 @@ function FunBotUIServer:_onBotEditorEvent(p_Player, p_Data)
 	elseif request.action == 'hide_waypoints_editor' then
 		NetEvents:SendTo('UI_Waypoints_Editor', p_Player, false)
 	else
-		ChatManager:Yell(Language:I18N('%s is currently not implemented.', request.action), 2.5)
+		-- ChatManager:Yell(Language:I18N('%s is currently not implemented.', request.action), 2.5)
 	end
 end
 
@@ -205,41 +200,41 @@ function FunBotUIServer:_onUIRequestCommonRoseShow(p_Player, p_Data)
 	NetEvents:SendTo('UI_CommonRose', p_Player, {
 		Top = {
 			Action = 'cr_save',
-			Label = Language:I18N('Save'),
+			Label = "default",
 			Confirm = true
 		},
 		Left = {
 			{
 				Action = 'cr_merge',
-				Label = Language:I18N('Merge')
+				Label = "default",
 			}, {
 				Action = 'cr_move',
-				Label = Language:I18N('Move')
+				Label = "default",
 			}, {
 				Action = 'cr_delete',
-				Label = Language:I18N('Delete')
+				Label = "default",
 			}
 		},
 		Center = {
 			Action = 'cr_select',
-			Label = Language:I18N('Select') -- or "Unselect"
+			Label = "default", -- or "Unselect"
 		},
 		Right = {
 			{
 				Action = 'cr_split',
-				Label = Language:I18N('Split')
+				Label = "default",
 			}, {
 				Action = 'cr_set_input',
-				Label = Language:I18N('Set Input'),
+				Label = "default",
 				Confirm = true
 			}, {
 				Action = 'cr_create',
-				Label = Language:I18N('Create')
+				Label = "default",
 			}
 		},
 		Bottom = {
 			Action = 'cr_load',
-			Label = Language:I18N('Load'),
+			Label = "default",
 			Confirm = true
 		}
 	})
@@ -383,21 +378,9 @@ function FunBotUIServer:_writeSettings(p_Player, p_Request)
 		end
 	end
 
-	--UI
-	if updateLanguage then
-		NetEvents:SendTo('UI_Change_Language', p_Player, p_Request.language)
-		Language:loadLanguage(p_Request.language)
-	end
-
 	-- Call batched process
 	if batched then
 		Database:ExecuteBatch()
-	end
-
-	if temporary then
-		ChatManager:Yell(Language:I18N('Settings has been saved temporarily.'), 2.5)
-	else
-		ChatManager:Yell(Language:I18N('Settings has been saved.'), 2.5)
 	end
 
 	-- update Weapons if needed

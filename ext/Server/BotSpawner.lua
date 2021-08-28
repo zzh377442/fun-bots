@@ -187,7 +187,7 @@ function BotSpawner:OnTeamChange(p_Player, p_TeamId, p_SquadId)
 
 				if p_Player ~= nil and p_TeamId ~= nil and (p_TeamId ~= s_PlayerTeam) then
 					p_Player.teamId = s_PlayerTeam
-					ChatManager:SendMessage(Language:I18N('CANT_JOIN_BOT_TEAM', p_Player), p_Player)
+					-- ChatManager:SendMessage(Language:I18N('CANT_JOIN_BOT_TEAM', p_Player), p_Player)
 				end
 			end
 		end
