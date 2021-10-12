@@ -728,7 +728,7 @@ function BotManager:_CheckForBotBotAttack()
 		local s_Bot = self._Bots[i]
 
 		-- bot has player, is alive, and hasn't found that special someone yet
-		if s_Bot ~= nil and s_Bot.m_Player and s_Bot.m_Player.soldier ~= nil and not self._BotCheckState[s_Bot.m_Player.name] then
+		if s_Bot ~= nil and s_Bot.m_Player ~= nil and s_Bot.m_Player.soldier ~= nil and not self._BotCheckState[s_Bot.m_Player.name] then
 			local s_OpposingTeams = {}
 
 			for l_TeamId = 1, Globals.NrOfTeams do
@@ -739,33 +739,69 @@ function BotManager:_CheckForBotBotAttack()
 
 			for _, s_OpposingTeam in pairs(s_OpposingTeams) do
 				-- search only opposing team
-				for _, l_Bot in pairs(self._BotsByTeam[s_OpposingTeam + 1]) do
-					-- make sure it's living and has no target
-					if (l_Bot ~= nil and l_Bot.m_Player ~= nil and l_Bot.m_Player.soldier ~= nil and not self._BotCheckState[l_Bot.m_Player.name]) then
-						local s_Distance = s_Bot.m_Player.soldier.worldTransform.trans:Distance(l_Bot.m_Player.soldier.worldTransform.trans)
+				for _, l_Enemy in pairs(PlayerManager:GetPlayersByTeam(s_OpposingTeam)) do
+					if (l_Enemy ~= nil and l_Enemy.soldier ~= nil and not self._BotCheckState[l_Enemy.name]) then
+						local s_EnemyBot = self:GetBotByName(l_Enemy.name)
+						local s_BotPosition = s_Bot.m_Player.soldier.worldTransform.trans:Clone()
+						local l_EnemyPosition = l_Enemy.soldier.worldTransform.trans:Clone()
+						local s_Distance = s_BotPosition:Distance(l_EnemyPosition)
 
-						if s_Distance <= Config.MaxBotAttackBotDistance then
+						if s_EnemyBot == nil then
+							-- real Player
+							if (s_Distance < Config.MaxRaycastDistance) or (s_Bot.m_InVehicle and Config.MaxRaycastDistanceVehicles) then
 
-							local s_BotPosition = s_Bot.m_Player.soldier.worldTransform.trans:Clone()
-							local l_BotPosition = l_Bot.m_Player.soldier.worldTransform.trans:Clone()
-							local s_Result = RaycastManager:CollisionRaycast(s_BotPosition, l_BotPosition, 1, MaterialFlags.MfPenetrable, RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter)
-							s_Raycasts = s_Raycasts + 1
-							self.tempCounter = self.tempCounter + 1
-							if s_Result[1] == nil or s_Result[1].rigidBody == nil then
-								if s_Bot:ShootAt(l_Bot.m_Player, false) or l_Bot:ShootAt(s_Bot.m_Player, false) then
-									self._BotCheckState[s_Bot.m_Player.name] = l_Bot.m_Player.name
-									self._BotCheckState[l_Bot.m_Player.name] = s_Bot.m_Player.name
-								else
-									self._BotCheckState[s_Bot.m_Player.name] = nil
-									self._BotCheckState[l_Bot.m_Player.name] = nil
+								if l_Enemy.controlledControllable ~= nil or s_Bot.m_InVehicle then
+									local s_DeltaPos = s_BotPosition - l_EnemyPosition
+									s_DeltaPos = s_DeltaPos:Normalize()
+									if l_Enemy.controlledControllable ~= nil then -- Start Raycast outside of vehicle?
+										l_EnemyPosition = l_EnemyPosition + (s_DeltaPos * 4.0)
+									end
+									if s_Bot.m_InVehicle then
+										s_BotPosition = s_BotPosition - (s_DeltaPos * 4.0)
+									end
+								end
+
+								local s_FlagsMaterial = MaterialFlags.MfPenetrable | MaterialFlags.MfClientDestructible | MaterialFlags.MfBashable | MaterialFlags.MfNoCollisionResponse
+
+								local s_Result = RaycastManager:CollisionRaycast(s_BotPosition, l_EnemyPosition, 1, s_FlagsMaterial, RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter)
+								s_Raycasts = s_Raycasts + 1
+
+								if s_Result[1] == nil or s_Result[1].rigidBody == nil then
+									-- we found a valid bot in Sight (either no hit, or player-hit). Signal Server with players
+									local s_IgnoreYaw = false
+				
+									if s_Distance < Config.DistanceForDirectAttack then
+										s_IgnoreYaw = true -- shoot, because you are near
+									end
+
+									s_Bot:ShootAt(l_Enemy, s_IgnoreYaw)
+									self._BotCheckState[s_Bot.m_Player.name] = l_Enemy.name
+								end
+								
+							end
+						else
+							-- other Bot
+							if s_Distance <= Config.MaxBotAttackBotDistance then
+								local s_FlagsMaterial = MaterialFlags.MfPenetrable | MaterialFlags.MfClientDestructible | MaterialFlags.MfBashable | MaterialFlags.MfNoCollisionResponse
+
+								local s_Result = RaycastManager:CollisionRaycast(s_BotPosition, l_EnemyPosition, 1, s_FlagsMaterial, RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter)
+								s_Raycasts = s_Raycasts + 1
+								self.tempCounter = self.tempCounter + 1
+								if s_Result[1] == nil or s_Result[1].rigidBody == nil then
+									if s_Bot:ShootAt(l_Enemy, false) or s_EnemyBot:ShootAt(s_Bot.m_Player, false) then
+										self._BotCheckState[s_Bot.m_Player.name] = l_Enemy.name
+										self._BotCheckState[l_Enemy.name] = s_Bot.m_Player.name
+									else
+										self._BotCheckState[s_Bot.m_Player.name] = nil
+										self._BotCheckState[l_Enemy.name] = nil
+									end
 								end
 							end
-
-							if s_Raycasts >= 7 then
-								-- leave the function early for this cycle
-								self._LastBotCheckIndex = i + 1
-								return
-							end
+						end
+						if s_Raycasts >= Registry.BOT.MAX_RAYCASTS_PER_CYCLE then
+							-- leave the function early for this cycle
+							self._LastBotCheckIndex = i + 1
+							return
 						end
 					end
 				end
@@ -778,7 +814,7 @@ function BotManager:_CheckForBotBotAttack()
 	-- should only reach here if every connection has been checked
 	-- clear the cache and start over
 	self._LastBotCheckIndex = 1
-	print(self.tempCounter)
+	-- print(self.tempCounter)
 	self.tempCounter = 0
 	self._BotCheckState = {}
 end

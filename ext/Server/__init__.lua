@@ -252,6 +252,9 @@ end
 
 function FunBotServer:OnRoundOver(p_RoundTime, p_WinningTeam)
 	m_GameDirector:OnRoundOver(p_RoundTime, p_WinningTeam)
+	m_BotManager:OnLevelDestroy()
+	m_BotSpawner:OnLevelDestroy()
+	m_AirTargets:OnLevelDestroy()
 	Globals.IsInputAllowed = false
 end
 

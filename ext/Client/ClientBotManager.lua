@@ -80,74 +80,7 @@ function ClientBotManager:OnUpdateManagerUpdate(p_DeltaTime, p_UpdatePass)
 
 	self.m_RaycastTimer = 0
 
-	if self.m_Player.soldier ~= nil then -- alive. Check for enemy bots
-		if self.m_AliveTimer < 1.0 then -- wait 2s (spawn-protection)
-			self.m_AliveTimer = self.m_AliveTimer + p_DeltaTime
-			return
-		end
-
-		local s_EnemyPlayers = {}
-		local s_AllPlayers = PlayerManager:GetPlayers()
-
-		for _, l_Player in pairs(s_AllPlayers) do
-			if l_Player.teamId ~= self.m_Player.teamId then
-				table.insert(s_EnemyPlayers, l_Player)
-			end
-		end
-
-		if self.m_LastIndex >= #s_EnemyPlayers then
-			self.m_LastIndex = 1
-		end
-
-		for i = 0, #s_EnemyPlayers - 1 do
-			local s_Bot = s_EnemyPlayers[(self.m_LastIndex + i) % #s_EnemyPlayers +1]
-
-			if s_Bot == nil or s_Bot.onlineId ~= 0 or s_Bot.soldier == nil then
-				goto continue_enemy_loop
-			end
-
-			-- check for clear view
-			local s_PlayerPosition = ClientUtils:GetCameraTransform().trans:Clone() --player.soldier.worldTransform.trans:Clone() + m_Utilities:getCameraPos(player, false)
-
-			-- find direction of Bot
-			local s_Target = s_Bot.soldier.worldTransform.trans:Clone() + m_Utilities:getCameraPos(s_Bot, false, false)
-			local s_Distance = s_PlayerPosition:Distance(s_Bot.soldier.worldTransform.trans)
-
-			if (s_Distance < Config.MaxRaycastDistance) or (s_Bot.inVehicle and Config.MaxRaycastDistanceVehicles) then
-				self.m_LastIndex = self.m_LastIndex + 1
-				local s_Raycast = nil
-
-				if self.m_Player.inVehicle or s_Bot.inVehicle then
-					local s_DeltaPos = s_Target - s_PlayerPosition
-					s_DeltaPos = s_DeltaPos:Normalize()
-					if self.m_Player.inVehicle then -- Start Raycast outside of vehicle?
-						s_PlayerPosition = s_PlayerPosition + (s_DeltaPos * 4.0)
-					end
-					if s_Bot.inVehicle then
-						s_Target = s_Target - (s_DeltaPos * 4.0)
-					end
-				end
-
-				s_Raycast = RaycastManager:Raycast(s_PlayerPosition, s_Target, RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter | RayCastFlags.IsAsyncRaycast)
-
-				if s_Raycast == nil or s_Raycast.rigidBody == nil then
-					-- we found a valid bot in Sight (either no hit, or player-hit). Signal Server with players
-					local s_IgnoreYaw = false
-
-					if s_Distance < Config.DistanceForDirectAttack then
-						s_IgnoreYaw = true -- shoot, because you are near
-					end
-
-					NetEvents:SendLocal("Bot:ShootAtPlayer", s_Bot.name, s_IgnoreYaw)
-				end
-
-				return --only one raycast per cycle
-			end
-
-			::continue_enemy_loop::
-		end
-	elseif self.m_Player.corpse ~= nil then -- dead. check for revive botsAttackBots
-		self.m_AliveTimer = 0.5 --add a little delay
+	if self.m_Player.corpse ~= nil then -- dead. check for revive botsAttackBots
 		local s_TeamMates = PlayerManager:GetPlayersByTeam(self.m_Player.teamId)
 
 		if self.m_LastIndex >= #s_TeamMates then
@@ -182,8 +115,6 @@ function ClientBotManager:OnUpdateManagerUpdate(p_DeltaTime, p_UpdatePass)
 
 			::continue_teamMate_loop::
 		end
-	else
-		self.m_AliveTimer = 0 --add a little delay after spawn
 	end
 end
 
