@@ -19,6 +19,8 @@ function BotManager:__init()
 	self._PendingAcceptRevives = {}
 	self._LastBotCheckIndex = 1
 	self._InitDone = false
+
+	self.tempCounter = 0
 end
 
 -- =============================================
@@ -743,21 +745,23 @@ function BotManager:_CheckForBotBotAttack()
 						local s_Distance = s_Bot.m_Player.soldier.worldTransform.trans:Distance(l_Bot.m_Player.soldier.worldTransform.trans)
 
 						if s_Distance <= Config.MaxBotAttackBotDistance then
-							-- choose a player at random, try until an active player is found
-							for l_PlayerIndex = s_NextPlayerIndex, s_PlayerCount do
-								if self._ActivePlayers[s_Players[l_PlayerIndex].name] then
-									-- check this bot view. Let one client do it
-									local s_BotPosition = s_Bot.m_Player.soldier.worldTransform.trans:Clone()
-									local l_BotPosition = l_Bot.m_Player.soldier.worldTransform.trans:Clone()
 
-									NetEvents:SendUnreliableToLocal('CheckBotBotAttack', s_Players[l_PlayerIndex], s_BotPosition, l_BotPosition, s_Bot.m_Player.name, l_Bot.m_Player.name, s_Bot.m_InVehicle, l_Bot.m_InVehicle)
-									s_Raycasts = s_Raycasts + 1
-									s_NextPlayerIndex = l_PlayerIndex + 1
-									break
+							local s_BotPosition = s_Bot.m_Player.soldier.worldTransform.trans:Clone()
+							local l_BotPosition = l_Bot.m_Player.soldier.worldTransform.trans:Clone()
+							local s_Result = RaycastManager:CollisionRaycast(s_BotPosition, l_BotPosition, 1, MaterialFlags.MfPenetrable, RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter)
+							s_Raycasts = s_Raycasts + 1
+							self.tempCounter = self.tempCounter + 1
+							if s_Result[1] == nil or s_Result[1].rigidBody == nil then
+								if s_Bot:ShootAt(l_Bot.m_Player, false) or l_Bot:ShootAt(s_Bot.m_Player, false) then
+									self._BotCheckState[s_Bot.m_Player.name] = l_Bot.m_Player.name
+									self._BotCheckState[l_Bot.m_Player.name] = s_Bot.m_Player.name
+								else
+									self._BotCheckState[s_Bot.m_Player.name] = nil
+									self._BotCheckState[l_Bot.m_Player.name] = nil
 								end
 							end
 
-							if s_Raycasts >= s_PlayerCount then
+							if s_Raycasts >= 7 then
 								-- leave the function early for this cycle
 								self._LastBotCheckIndex = i + 1
 								return
@@ -774,6 +778,8 @@ function BotManager:_CheckForBotBotAttack()
 	-- should only reach here if every connection has been checked
 	-- clear the cache and start over
 	self._LastBotCheckIndex = 1
+	print(self.tempCounter)
+	self.tempCounter = 0
 	self._BotCheckState = {}
 end
 

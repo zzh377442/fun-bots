@@ -63,7 +63,7 @@ Registry = {
         -- Bot related
         BOT = {
                 -- Bot attack bot check interval
-                BOT_ATTACK_BOT_CHECK_INTERVAL = 0.05,
+                BOT_ATTACK_BOT_CHECK_INTERVAL = 0.03,
 
 				-- Update cycle fast
                 BOT_FAST_UPDATE_CYCLE = 0.03, -- equals 30 fps

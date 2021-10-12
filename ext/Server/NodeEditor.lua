@@ -265,7 +265,7 @@ function NodeEditor:OnInit(p_Player, p_Save)
 end
 
 function NodeEditor:OnWarpTo(p_Player, p_Vec3Position)
-	if p_Player == nil or not p_Player.alive or p_Player.soldier == nil or not p_Player.soldier.isAlive then
+	if p_Player == nil or p_Player.soldier == nil then
 		return
 	end
 
