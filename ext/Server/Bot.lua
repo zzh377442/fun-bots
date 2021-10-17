@@ -407,7 +407,7 @@ function Bot:ShootAt(p_Player, p_IgnoreYaw)
 			if m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.AntiAir) then
 				s_FovHalf = Config.FovVehicleAAForShooting / 360 * math.pi
 				s_PitchHalf = Config.FovVerticleVehicleAAForShooting / 360 * math.pi
-			elseif m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Chopper) and self.m_Player.controlledEntryId == 0 then -- chopper as driver
+			elseif (m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Chopper) or m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Plane)) and self.m_Player.controlledEntryId == 0 then -- chopper as driver
 				s_FovHalf = Config.FovVehicleForShooting / 360 * math.pi
 				s_PitchHalf = Config.FovVerticleChopperForShooting / 360 * math.pi
 			else
@@ -815,16 +815,26 @@ function Bot:_UpdateAimingVehicleAdvanced()
 	self._TargetYaw = s_Yaw
 
 
-	-- abort attacking in chopper if too steep or too low
+	-- abort attacking in chopper or jet if too steep or too low
 	if (m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Chopper) and self.m_Player.controlledEntryId == 0 ) or m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Plane) then
 		local s_PitchHalf = Config.FovVerticleChopperForShooting / 360 * math.pi
 		if math.abs(self._TargetPitch) > s_PitchHalf then
 			self:_AbortAttack()
 			return
 		end
+		if m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Plane) and s_FullPositionBot:Distance(s_FullPositionTarget) < 40 then
+			self:_AbortAttack()
+		end
 		if self._ShootPlayerVehicleType ~= VehicleTypes.Chopper and self._ShootPlayerVehicleType ~= VehicleTypes.Plane then
-			if s_DifferenceY > -20 and s_DifferenceY < 0 then -- too low to the ground
-				self:_AbortAttack()
+			local s_DiffVertical = s_FullPositionTarget.y - s_FullPositionBot.y
+			if m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Chopper) then
+				if s_DiffVertical > -20 then -- too low to the ground
+					self:_AbortAttack()
+				end
+			elseif m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Plane) then
+				if s_DiffVertical > -50 then -- too low to the ground
+					self:_AbortAttack()
+				end
 			end
 			return
 		end
@@ -906,16 +916,26 @@ function Bot:_UpdateAimingVehicle(p_DeltaTime)
 	self._TargetYaw = s_Yaw
 
 
-	-- abort attacking in chopper if too steep or too low
+	-- abort attacking in chopper or jet if too steep or too low
 	if (m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Chopper) and self.m_Player.controlledEntryId == 0 ) or m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Plane) then
 		local s_PitchHalf = Config.FovVerticleChopperForShooting / 360 * math.pi
 		if math.abs(self._TargetPitch) > s_PitchHalf then
 			self:_AbortAttack()
 			return
 		end
+		if m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Plane) and s_FullPositionBot:Distance(s_FullPositionTarget) < 40 then
+			self:_AbortAttack()
+		end
 		if self._ShootPlayerVehicleType ~= VehicleTypes.Chopper and self._ShootPlayerVehicleType ~= VehicleTypes.Plane then
-			if s_DifferenceY > -20 and s_DifferenceY < 0 then -- too low to the ground
-				self:_AbortAttack()
+			local s_DiffVertical = s_FullPositionTarget.y - s_FullPositionBot.y
+			if m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Chopper) then
+				if s_DiffVertical > -20 then -- too low to the ground
+					self:_AbortAttack()
+				end
+			elseif m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Plane) then
+				if s_DiffVertical > -50 then -- too low to the ground
+					self:_AbortAttack()
+				end
 			end
 			return
 		end
@@ -1329,8 +1349,6 @@ function Bot:_UpdateYawVehicle(p_Attacking)
 		else
 			-- TODO: use angle between two nodes?
 			
-			-- print("tilt: "..tostring(s_Current_Tilt))
-
 			local s_Delta_Height = self._TargetPoint.Position.y - self.m_Player.controlledControllable.transform.trans.y
 
 			local s_Tartget_Tilt = 0.0
@@ -1908,8 +1926,12 @@ function Bot:_EnterVehicle(p_Name)
 					self._VehicleMovableId = m_Vehicles:GetPartIdForSeat(self.m_ActiveVehicle, i)
 					m_Logger:Write(self.m_ActiveVehicle)
 					if i == 0 then
-						self._VehicleWaitTimer = Config.VehicleWaitForPassengersTime
-						self._BrakeTimer = 0
+						if i == s_Entity.entryCount - 1 then
+							self._VehicleWaitTimer = 1.0 -- always wait a short time to check for free start
+						else
+							self._VehicleWaitTimer = Config.VehicleWaitForPassengersTime
+							self._BrakeTimer = 0
+						end
 					else
 						self._VehicleWaitTimer = 0
 						if i == s_Entity.entryCount - 1 then
@@ -2004,6 +2026,15 @@ function Bot:_UpdateNormalMovementVehicle()
 	if self._VehicleWaitTimer > 0 then
 		self._VehicleWaitTimer = self._VehicleWaitTimer - Registry.BOT.BOT_UPDATE_CYCLE
 		if self._VehicleWaitTimer <= 0 then
+			if m_Vehicles:IsVehicleType(self.m_ActiveVehicle, VehicleTypes.Plane) then
+				-- check for other plane in front of bot
+				local s_IsInfront = false
+				-- TODO: add code here
+				if s_IsInfront then
+					self._VehicleWaitTimer = 5.0 -- one more cycle
+					return
+				end
+			end
 			g_GameDirector:_SetVehicleObjectiveState(self.m_Player.soldier.worldTransform.trans, false)
 		else
 			return

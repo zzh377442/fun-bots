@@ -33,6 +33,8 @@ This release contains a lot of small bug fixes and more QoL updates.
 	* !!THANKS A LOT TO NyScorpy FOR LETTING ME USE HIS CODE!!!
 	* not done yet, but already usable with only a few settings
 * more failsave system for Rush-Mcoms
+* first support for jets added
+* Export / Import system for easy shareing of paths
 
 ### New maps
 * Theran Highway CQS (Vehicles) - thanks to Gemini899
@@ -48,3 +50,5 @@ This release contains a lot of small bug fixes and more QoL updates.
 * Caspian Border CQS (with Vehicles) - thanks to MeisterPeitsche
 * Operation Firestorm CQS (with Vehicles) - thanks to MeisterPeitsche
 * Damavand Peak CQS (with Vehicles) - thanks to MeisterPeitsche
+* Operation Firestorm CQS (Jets) - thanks to KrazyIvan777
+* Gulf of Oman CQS (Jets) - thanks to KrazyIvan777
