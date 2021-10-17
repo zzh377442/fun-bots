@@ -19,6 +19,7 @@ function BotManager:__init()
 	self._PendingAcceptRevives = {}
 	self._LastBotCheckIndex = 1
 	self._InitDone = false
+	self._CurrentPlayerList = {}
 
 	self.tempCounter = 0
 end
@@ -753,7 +754,7 @@ function BotManager:_CheckForBotBotAttack()
 								if l_Enemy.controlledControllable ~= nil or s_Bot.m_InVehicle then
 									local s_DeltaPos = s_BotPosition - l_EnemyPosition
 									s_DeltaPos = s_DeltaPos:Normalize()
-									if l_Enemy.controlledControllable ~= nil then -- Start Raycast outside of vehicle?
+									if l_Enemy.controlledControllable ~= nil and not l_Enemy.controlledControllable:Is("ServerSoldierEntity") then -- Start Raycast outside of vehicle?
 										l_EnemyPosition = l_EnemyPosition + (s_DeltaPos * 4.0)
 									end
 									if s_Bot.m_InVehicle then
@@ -761,9 +762,9 @@ function BotManager:_CheckForBotBotAttack()
 									end
 								end
 
-								local s_FlagsMaterial = MaterialFlags.MfPenetrable | MaterialFlags.MfClientDestructible | MaterialFlags.MfBashable | MaterialFlags.MfNoCollisionResponse
-
-								local s_Result = RaycastManager:CollisionRaycast(s_BotPosition, l_EnemyPosition, 1, s_FlagsMaterial, RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter)
+								local s_FlagsMaterial = 0 --MaterialFlags.MfPenetrable | MaterialFlags.MfClientDestructible | MaterialFlags.MfBashable | MaterialFlags.MfSeeThrough | MaterialFlags.MfNoCollisionResponse | MaterialFlags.MfNoCollisionResponseCombined
+								local s_RaycastFlags = RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter
+								local s_Result = RaycastManager:CollisionRaycast(s_BotPosition, l_EnemyPosition, 1, s_FlagsMaterial, s_RaycastFlags)
 								s_Raycasts = s_Raycasts + 1
 
 								if s_Result[1] == nil or s_Result[1].rigidBody == nil then
@@ -782,9 +783,21 @@ function BotManager:_CheckForBotBotAttack()
 						else
 							-- other Bot
 							if s_Distance <= Config.MaxBotAttackBotDistance then
-								local s_FlagsMaterial = MaterialFlags.MfPenetrable | MaterialFlags.MfClientDestructible | MaterialFlags.MfBashable | MaterialFlags.MfNoCollisionResponse
 
-								local s_Result = RaycastManager:CollisionRaycast(s_BotPosition, l_EnemyPosition, 1, s_FlagsMaterial, RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter)
+								if s_EnemyBot.m_InVehicle or s_Bot.m_InVehicle then
+									local s_DeltaPos = s_BotPosition - l_EnemyPosition
+									s_DeltaPos = s_DeltaPos:Normalize()
+									if s_Bot.m_InVehicle then -- Start Raycast outside of vehicle?
+										l_EnemyPosition = l_EnemyPosition + (s_DeltaPos * 4.0)
+									end
+									if s_EnemyBot.m_InVehicle then
+										s_BotPosition = s_BotPosition - (s_DeltaPos * 4.0)
+									end
+								end
+
+								local s_FlagsMaterial = 0 -- MaterialFlags.MfPenetrable | MaterialFlags.MfClientDestructible | MaterialFlags.MfBashable | MaterialFlags.MfSeeThrough | MaterialFlags.MfNoCollisionResponse | MaterialFlags.MfNoCollisionResponseCombined
+								local s_RaycastFlags = RayCastFlags.DontCheckWater | RayCastFlags.DontCheckCharacter
+								local s_Result = RaycastManager:CollisionRaycast(s_BotPosition, l_EnemyPosition, 1, s_FlagsMaterial, s_RaycastFlags)
 								s_Raycasts = s_Raycasts + 1
 								self.tempCounter = self.tempCounter + 1
 								if s_Result[1] == nil or s_Result[1].rigidBody == nil then
