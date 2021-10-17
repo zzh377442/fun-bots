@@ -719,6 +719,10 @@ function BotManager:_DoRaycast(p_BotPosition, p_EnemyPostition, p_NumberOfExpect
 	end
 end
 
+function BotManager:_EvaluateAttackBotBot(p_Bot1, p_Bot2)
+	
+end
+
 function BotManager:_EvaluateAttackBotPlayer(p_AttackinBot, p_Player)
 	-- don't attack as driver in some vehicles
 	if p_AttackinBot.m_InVehicle and p_AttackinBot.m_Player.controlledEntryId == 0 then
@@ -854,7 +858,7 @@ function BotManager:_EvaluateAttackBotPlayer(p_AttackinBot, p_Player)
 			s_NumberOfHits = s_NumberOfHits + 1
 		end
 
-		return true, s_CheckDistance, s_AttackingBotPos, s_EnemyPosition, s_NumberOfHits
+		return true, s_AttackingBotPos, s_EnemyPosition, s_NumberOfHits
 	end
 
 	return false
@@ -900,7 +904,7 @@ function BotManager:_CheckForBotAttack()
 								end
 							else
 								-- Bot on Player Attack
-								local s_Attack, s_CheckDistance, s_BotPosition, s_EnemyPostition, s_NumberOfExpectedHits = self:_EvaluateAttackBotPlayer(s_Bot, l_Player)
+								local s_Attack, s_BotPosition, s_EnemyPostition, s_NumberOfExpectedHits = self:_EvaluateAttackBotPlayer(s_Bot, l_Player)
 								if s_Attack then
 									if self:_DoRaycast(s_BotPosition, s_EnemyPostition, s_NumberOfExpectedHits) then
 										-- notify bot to attack player (no more check needed)
