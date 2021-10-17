@@ -199,6 +199,7 @@ end
 function FunBotServer:OnEngineUpdate(p_DeltaTime, p_SimulationDeltaTime)
 	m_GameDirector:OnEngineUpdate(p_DeltaTime)
 	m_NodeEditor:OnEngineUpdate(p_DeltaTime)
+	m_BotManager:OnEngineUpdate(p_DeltaTime)
 end
 
 function FunBotServer:OnUpdateManagerUpdate(p_DeltaTime, p_UpdatePass)
