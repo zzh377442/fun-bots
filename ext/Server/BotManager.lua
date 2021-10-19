@@ -720,7 +720,15 @@ function BotManager:_DoRaycast(p_BotPosition, p_EnemyPostition, p_NumberOfExpect
 end
 
 function BotManager:_EvaluateAttackBotBot(p_Bot1, p_Bot2)
-	
+	local s_Attack1, s_BotPosition1, s_EnemyPostition1, s_NumberOfExpectedHits1 = self:_EvaluateAttackBotPlayer(p_Bot1, p_Bot2.m_Player)
+	local s_Attack2, s_BotPosition2, s_EnemyPostition2, s_NumberOfExpectedHits2 = self:_EvaluateAttackBotPlayer(p_Bot2, p_Bot1.m_Player)
+	if s_Attack1 then
+		return s_Attack1, s_Attack2, s_BotPosition1, s_EnemyPostition1, s_NumberOfExpectedHits1
+	elseif s_Attack2 then
+		return s_Attack1, s_Attack2, s_BotPosition2, s_EnemyPostition2, s_NumberOfExpectedHits2
+	else
+		return s_Attack1, s_Attack2
+	end
 end
 
 function BotManager:_EvaluateAttackBotPlayer(p_AttackinBot, p_Player)
@@ -866,7 +874,7 @@ end
 
 function BotManager:_CheckForBotAttack()
 	local s_Raycasts = 0
-	local s_NextPlayerIndex = 1
+	local s_Evaluations = 0
 
 	for i = self._LastBotCheckIndex, #self._Bots do
 		local s_Bot = self._Bots[i]
@@ -892,31 +900,59 @@ function BotManager:_CheckForBotAttack()
 							if s_EnemyBot ~= nil then
 								-- Bot on Bot Attack
 								local s_Attack1, s_Attack2, s_BotPosition, s_EnemyPostition, s_NumberOfExpectedHits = self:_EvaluateAttackBotBot(s_Bot, s_EnemyBot)
+								s_Evaluations = s_Evaluations + 1
 								if s_Attack1 or s_Attack2 then
 									if self:_DoRaycast(s_BotPosition, s_EnemyPostition, s_NumberOfExpectedHits) then
 										if s_Attack1 then
-											-- notify bot to attack
+											s_Bot:Attack(s_EnemyBot.m_Player) -- notify bot to attack
 										end
 										if s_Attack2 then
-											-- notify bot2 to attack
+											s_EnemyBot:Attack(s_Bot.m_Player) -- notify bot to attack
 										end
 									end
+									s_Raycasts = s_Raycasts + 1
+									self.tempCounter = self.tempCounter + 1
+									if s_Raycasts > 3 then
+										self._LastBotCheckIndex = i
+										return
+									end
+								end
+								if s_Evaluations > 10 then
+									self._LastBotCheckIndex = i
+									return
 								end
 							else
 								-- Bot on Player Attack
 								local s_Attack, s_BotPosition, s_EnemyPostition, s_NumberOfExpectedHits = self:_EvaluateAttackBotPlayer(s_Bot, l_Player)
+								s_Evaluations = s_Evaluations + 1
 								if s_Attack then
 									if self:_DoRaycast(s_BotPosition, s_EnemyPostition, s_NumberOfExpectedHits) then
 										-- notify bot to attack player (no more check needed)
+										s_Bot:Attack(l_Player)
 									end
+									s_Raycasts = s_Raycasts + 1
+									self.tempCounter = self.tempCounter + 1
+									if s_Raycasts > 3 then
+										self._LastBotCheckIndex = i
+										return
+									end
+								end
+								if s_Evaluations > 10 then
+									self._LastBotCheckIndex = i
+									return
 								end
 							end
 						end				
 					end
 				end
 			end
+			self._LastBotCheckIndex = i + 1
 		end
 	end
+	print(self.tempCounter)
+	self._LastBotCheckIndex = 1
+	self.tempCounter = 0
+	self._BotCheckState = {}
 end
 
 

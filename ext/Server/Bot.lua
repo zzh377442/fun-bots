@@ -445,6 +445,28 @@ function Bot:ShootAt(p_Player, p_IgnoreYaw)
 	return false
 end
 
+function Bot:Attack(p_Player)
+	if self._Shoot then
+		if self._ShootPlayer == nil or (self.m_InVehicle and (self._ShootModeTimer > Config.BotMinTimeShootAtPlayer * 1.5)) or (not self.m_InVehicle and (self._ShootModeTimer > Config.BotMinTimeShootAtPlayer)) or (self.m_KnifeMode and self._ShootModeTimer > (Config.BotMinTimeShootAtPlayer/2)) then
+			self._ShootModeTimer = 0
+			self._ShootPlayerName = p_Player.name
+			self._ShootPlayer = nil
+			self._KnifeWayPositions = {}
+			self._VehicleReadyToShoot = false
+			self._ShotTimer = - self:GetFirstShotDelay(self._DistanceToPlayer)
+
+			if self.m_KnifeMode then
+				table.insert(self._KnifeWayPositions, p_Player.soldier.worldTransform.trans:Clone())
+			end
+
+			return true
+		end
+	else
+		self._ShootModeTimer = Config.BotFireModeDuration
+		return false
+	end
+end
+
 function Bot:ResetVars()
 	self._SpawnMode = BotSpawnModes.NoRespawn
 	self._MoveMode = BotMoveModes.Standstill
