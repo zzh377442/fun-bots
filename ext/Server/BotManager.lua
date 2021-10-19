@@ -900,7 +900,7 @@ function BotManager:_CheckForBotAttack()
 							if s_EnemyBot ~= nil then
 								-- Bot on Bot Attack
 								local s_Attack1, s_Attack2, s_BotPosition, s_EnemyPostition, s_NumberOfExpectedHits = self:_EvaluateAttackBotBot(s_Bot, s_EnemyBot)
-								s_Evaluations = s_Evaluations + 1
+								s_Evaluations = s_Evaluations + 2
 								if s_Attack1 or s_Attack2 then
 									if self:_DoRaycast(s_BotPosition, s_EnemyPostition, s_NumberOfExpectedHits) then
 										if s_Attack1 then
@@ -912,12 +912,12 @@ function BotManager:_CheckForBotAttack()
 									end
 									s_Raycasts = s_Raycasts + 1
 									self.tempCounter = self.tempCounter + 1
-									if s_Raycasts > 3 then
+									if s_Raycasts > 2 then
 										self._LastBotCheckIndex = i
 										return
 									end
 								end
-								if s_Evaluations > 10 then
+								if s_Evaluations > 6 then
 									self._LastBotCheckIndex = i
 									return
 								end
@@ -932,12 +932,12 @@ function BotManager:_CheckForBotAttack()
 									end
 									s_Raycasts = s_Raycasts + 1
 									self.tempCounter = self.tempCounter + 1
-									if s_Raycasts > 3 then
+									if s_Raycasts > 2 then
 										self._LastBotCheckIndex = i
 										return
 									end
 								end
-								if s_Evaluations > 10 then
+								if s_Evaluations > 6 then
 									self._LastBotCheckIndex = i
 									return
 								end
