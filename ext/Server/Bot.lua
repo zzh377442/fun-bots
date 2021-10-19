@@ -1955,7 +1955,8 @@ function Bot:_EnterVehicleEntity(p_Entity)
 				m_Logger:Write(self.m_ActiveVehicle)
 				if i == 0 then
 					if i == p_Entity.entryCount - 1 then
-						self._VehicleWaitTimer = 1.0 -- always wait a short time to check for free start
+						self._VehicleWaitTimer = 0.5 -- always wait a short time to check for free start
+						g_GameDirector:_SetVehicleObjectiveState(p_Entity.transform.trans, false)
 					else
 						self._VehicleWaitTimer = Config.VehicleWaitForPassengersTime
 						self._BrakeTimer = 0
@@ -1985,16 +1986,14 @@ function Bot:_EnterVehicle(p_Name)
 	local s_Entity = s_Iterator:Next()
 
 	local s_ClosestEntity = nil
-	local s_ClosestDistance = nil
+	local s_ClosestDistance = 10 -- at least 10 m 
 	while s_Entity ~= nil do
 		s_Entity = ControllableEntity(s_Entity)
 		local s_Position = s_Entity.transform.trans
 		local s_Distance = s_Position:Distance(self.m_Player.soldier.worldTransform.trans)
-		if (s_Distance) then
-			if s_ClosestDistance == nil or s_Distance < s_ClosestDistance then
-				s_ClosestEntity = s_Entity
-				s_ClosestDistance = s_Distance
-			end
+		if s_Distance < s_ClosestDistance then
+			s_ClosestEntity = s_Entity
+			s_ClosestDistance = s_Distance
 		end
 		s_Entity = s_Iterator:Next()
 	end
@@ -2502,13 +2501,13 @@ function Bot:_UpdateNormalMovement()
 					s_HeightDistance = 0
 
 					-- teleport to target
+					s_NoStuckReset = true
 					if Config.TeleportIfStuck and (MathUtils:GetRandomInt(0,100) <= Registry.BOT.PROBABILITY_TELEPORT_IF_STUCK) then
 						local s_Transform = self.m_Player.soldier.worldTransform:Clone()
 						s_Transform.trans = self._NextTargetPoint.Position
 						self.m_Player.soldier:SetTransform(s_Transform)
 						m_Logger:Write("tepeported "..self.m_Player.name)
 					else
-						s_NoStuckReset = true
 						if not self.m_InVehicle then
 							s_PointIncrement = MathUtils:GetRandomInt(-5,5) -- go 5 points further
 							-- experimental
