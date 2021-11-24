@@ -315,7 +315,7 @@ function BotManager:OnRequestChangeSeatVehicle(p_Player, p_SeatNumber)
 				s_Bot.m_Player:ExitVehicle(false, false)
 				p_Player:EnterVehicle(s_VehicleEntity, s_TargetEntryId)
 				s_Bot.m_Player:EnterVehicle(s_VehicleEntity, s_CurrentEntryOfPlayer)
-				s_Bot:_UpdateVehicleMovableId()
+				s_Bot:UpdateVehicleMovableId()
 			end
 		end
 	end

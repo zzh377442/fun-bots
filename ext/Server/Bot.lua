@@ -1377,17 +1377,6 @@ function Bot:_UpdateYawVehicle(p_Attacking)
 		-- no backwards in chopper
 		self.m_Player.input:SetLevel(EntryInputActionEnum.EIAYaw, -s_Output_Yaw)
 
-		-- HEIGHT
-		local s_Delta_Height = self._TargetPoint.Position.y - self.m_Player.controlledControllable.transform.trans.y
-		local s_Output_Throttle = self._Pid_Drv_Throttle:Update(s_Delta_Height)
-		if s_Output_Throttle > 0 then
-			self.m_Player.input:SetLevel(EntryInputActionEnum.EIAThrottle, s_Output_Throttle)
-			self.m_Player.input:SetLevel(EntryInputActionEnum.EIABrake, 0.0)
-		else
-			self.m_Player.input:SetLevel(EntryInputActionEnum.EIAThrottle, 0.0)
-			self.m_Player.input:SetLevel(EntryInputActionEnum.EIABrake, -s_Output_Throttle)
-		end
-
 		-- FOREWARD (depending on speed)
 		-- A: use distance horizontally between points for speed-value --> not that good for that
 		-- local DeltaX = self._NextTargetPoint.Position.x - self._TargetPoint.Position.x
@@ -1422,6 +1411,24 @@ function Bot:_UpdateYawVehicle(p_Attacking)
 		local s_Delta_Roll = s_Tartget_Roll - s_Current_Roll
 		local s_Output_Roll = self._Pid_Drv_Roll:Update(s_Delta_Roll)
 		self.m_Player.input:SetLevel(EntryInputActionEnum.EIARoll, s_Output_Roll)
+
+		-- HEIGHT
+		local s_Delta_Height = self._TargetPoint.Position.y - self.m_Player.controlledControllable.transform.trans.y
+		local s_Output_Throttle = self._Pid_Drv_Throttle:Update(s_Delta_Height)
+		-- don't use negative throttle if tilt is too steep
+		if math.abs(s_Delta_Roll) > 0.8 or math.abs(s_Delta_Tilt) > 0.8 then
+			print("full throttle for correction")
+			if s_Output_Throttle < 0 then
+				s_Output_Throttle = 1
+			end
+		end
+		if s_Output_Throttle > 0 then
+			self.m_Player.input:SetLevel(EntryInputActionEnum.EIAThrottle, s_Output_Throttle)
+			self.m_Player.input:SetLevel(EntryInputActionEnum.EIABrake, 0.0)
+		else
+			self.m_Player.input:SetLevel(EntryInputActionEnum.EIAThrottle, 0.0)
+			self.m_Player.input:SetLevel(EntryInputActionEnum.EIABrake, -s_Output_Throttle)
+		end
 
 		return -- don't do anything else
 	
@@ -2028,8 +2035,8 @@ function Bot:_UpdateAttackingVehicle()
 	end
 end
 
-function Bot:FindVehiclePath(p_Position)
-	local s_Node = g_GameDirector:FindClosestPath(p_Position, true)
+function Bot:FindVehiclePath(p_Position, p_AlreadyDriving)
+	local s_Node = g_GameDirector:FindClosestPath(p_Position, true, self.m_ActiveVehicle, p_AlreadyDriving)
 	if s_Node ~= nil then
 		-- switch to vehicle
 		self._InvertPathDirection = false
@@ -2039,10 +2046,15 @@ function Bot:FindVehiclePath(p_Position)
 	end
 end
 
-function Bot:_UpdateVehicleMovableId()
+function Bot:UpdateVehicleMovableId()
 	self._VehicleMovableId = m_Vehicles:GetPartIdForSeat(self.m_ActiveVehicle, self.m_Player.controlledEntryId)
 	if self.m_Player.controlledEntryId == 0 then
-		self:FindVehiclePath(self.m_Player.soldier.worldTransform.trans)
+		print("new driver")
+		self:FindVehiclePath(self.m_Player.soldier.worldTransform.trans, true)
+		self._Pid_Drv_Yaw:Reset()
+		self._Pid_Drv_Tilt:Reset()
+		self._Pid_Drv_Roll:Reset()
+		self._Pid_Drv_Throttle:Reset(1)
 	end
 end
 
@@ -2509,7 +2521,7 @@ function Bot:_UpdateNormalMovement()
 						local s_RetCode, s_Position = self:_EnterVehicle()
 						if s_RetCode == 0 then
 							self:_ResetActionFlag(BotActionFlags.OtherActionActive)
-							local s_Node = g_GameDirector:FindClosestPath(s_Position, true)
+							local s_Node = g_GameDirector:FindClosestPath(s_Position, true, self.m_ActiveVehicle, false)
 		
 							if s_Node ~= nil then
 								-- switch to vehicle

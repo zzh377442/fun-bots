@@ -9,8 +9,12 @@ function PidController:__init(p_Kp, p_Ki, p_Kd, p_Limit)
 	self._Limit = p_Limit
 end
 
-function PidController:Reset()
-	self._Integral = 0
+function PidController:Reset(p_Value)
+	if p_Value ~= nil then
+		self._Integral = p_Value
+	else
+		self._Integral = 0
+	end
 end
 
 function PidController:Update(p_Error)

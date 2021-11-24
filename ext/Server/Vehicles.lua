@@ -90,6 +90,16 @@ function Vehicles:GetSpeedAndDrop(p_VehicleData, p_Index)
 	return s_Speed, s_Drop
 end
 
+function Vehicles:GetPathType(p_VehicleData)
+	local s_PathType = ""
+	if p_VehicleData ~= nil then
+		if self:IsVehicleType(p_VehicleData, VehicleTypes.Chopper) or self:IsVehicleType(p_VehicleData, VehicleTypes.Plane) then
+			s_PathType = "air"
+		end
+	end
+	return s_PathType
+end
+
 
 function Vehicles:CheckForVehicleAttack(p_VehicleType, p_Distance, p_Gadget, p_InVehicle)
 	local s_AttackMode = VehicleAttackModes.NoAttack -- no attack
