@@ -116,7 +116,7 @@ Registry = {
 			-- The max time a bot tries to move to the repair-vehicle
 			MAX_TIME_TRY_REPAIR = 10,
 			-- Advanced aiming makes a difference on huge distances, but costs more performance
-			USE_ADVANCED_AIMING = false,
+			USE_ADVANCED_AIMING = true,
 		},
 
 		-- Bot team balancing
